@@ -1,8 +1,4 @@
 public extension Promise where Value == Any {
-	static func resolve() -> Promise<Void> {
-		.resolve(())
-	}
-	
 	@discardableResult
 	static func all(_ promises: [PromiseLike]) -> Promise<[Any]> {
 		.init { resolve, reject in
