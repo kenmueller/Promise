@@ -6,7 +6,7 @@ public final class Promise<Value> {
 		didSet { finalize() }
 	}
 	
-	var error: Error? {
+	var error: Swift.Error? {
 		willSet { errorIfFinalized() }
 		didSet { finalize() }
 	}
@@ -15,15 +15,11 @@ public final class Promise<Value> {
 		!(value == nil && error == nil)
 	}
 	
-	public var asAny: Promise<Any> {
-		then { .init(value: $0) }
-	}
-	
 	public init(_ initializer: Initializer) {
 		initializer({ self.value = $0 }, { self.error = $0 })
 	}
 	
-	private init(value: Value? = nil, error: Error? = nil) {
+	private init(value: Value? = nil, error: Swift.Error? = nil) {
 		self.value = value
 		self.error = error
 	}
@@ -32,7 +28,7 @@ public final class Promise<Value> {
 		.init(value: value)
 	}
 	
-	public static func reject(_ error: Error) -> Promise<Value> {
+	public static func reject(_ error: Swift.Error) -> Promise<Value> {
 		.init(error: error)
 	}
 	

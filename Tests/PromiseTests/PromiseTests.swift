@@ -3,10 +3,26 @@ import XCTest
 
 final class PromiseTests: XCTestCase {
 	static let allTests = [
-		("testTrue", testTrue)
+		("testAll", testAll)
 	]
 	
-	func testTrue() {
-		XCTAssertTrue(true)
+	func testAll() {
+		let promise = expectation(description: "Cast")
+		var success: Bool?
+		
+		Promise
+			.resolve("")
+			.value(as: String.self)
+			.then { _ -> Void in
+				success = true
+				promise.fulfill()
+			}
+			.catch { _ -> Void in
+				success = false
+				promise.fulfill()
+			}
+		
+		waitForExpectations(timeout: 5, handler: nil)
+		XCTAssertTrue(success == true)
 	}
 }
