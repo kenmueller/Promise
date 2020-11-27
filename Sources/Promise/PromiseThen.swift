@@ -33,7 +33,11 @@ public extension Promise {
 	@discardableResult
 	func then<NewValue>(_ handler: @escaping ChainingResolver<NewValue>) -> Promise<NewValue> {
 		if let value = value {
-			return handler(value)
+			do {
+				return try handler(value)
+			} catch {
+				return .reject(error)
+			}
 		}
 		
 		if let error = error {
@@ -43,7 +47,11 @@ public extension Promise {
 		return .init { resolve, reject in
 			finalizers.append {
 				if let value = self.value {
-					handler(value).then(resolve).catch(reject)
+					do {
+						try handler(value).then(resolve).catch(reject)
+					} catch {
+						reject(error)
+					}
 				} else if let error = self.error {
 					reject(error)
 				}

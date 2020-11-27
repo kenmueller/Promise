@@ -37,7 +37,11 @@ public extension Promise {
 		}
 		
 		if let error = error {
-			return handler(error)
+			do {
+				return try handler(error)
+			} catch {
+				return .reject(error)
+			}
 		}
 		
 		return .init { resolve, reject in
@@ -45,7 +49,11 @@ public extension Promise {
 				if let value = self.value {
 					resolve(value)
 				} else if let error = self.error {
-					handler(error).then(resolve).catch(reject)
+					do {
+						try handler(error).then(resolve).catch(reject)
+					} catch {
+						reject(error)
+					}
 				}
 			}
 		}

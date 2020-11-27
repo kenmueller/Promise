@@ -3,10 +3,12 @@ import XCTest
 
 final class PromiseTests: XCTestCase {
 	static let allTests = [
-		("testAll", testAll)
+		("testCast", testCast),
+		("testAsynchronous", testAsynchronous),
+		("testAwait", testAwait)
 	]
 	
-	func testAll() {
+	func testCast() {
 		let promise = expectation(description: "Cast")
 		var success: Bool?
 		
@@ -24,5 +26,30 @@ final class PromiseTests: XCTestCase {
 		
 		waitForExpectations(timeout: 5, handler: nil)
 		XCTAssertTrue(success == true)
+	}
+	
+	func testAsynchronous() {
+		sleep(for: 1).then { _ in print("sleep 1") }
+		print("mid")
+		sleep(for: 2).then { _ in print("sleep 2") }
+	}
+	
+	func testAwait() {
+		do {
+			try *sleep(for: 1)
+			XCTAssertTrue(true)
+		} catch {
+			XCTAssertTrue(false)
+		}
+	}
+	
+	func sleep(for timeInterval: TimeInterval) -> Promise<Timer> {
+		.init { resolve, _ in
+			Timer.scheduledTimer(
+				withTimeInterval: timeInterval,
+				repeats: false,
+				block: resolve
+			)
+		}
 	}
 }

@@ -1,3 +1,5 @@
+import Dispatch
+
 public final class Promise<Value> {
 	var finalizers = [() -> Void]()
 	
@@ -16,7 +18,11 @@ public final class Promise<Value> {
 	}
 	
 	public init(_ initializer: Initializer) {
-		initializer({ self.value = $0 }, { self.error = $0 })
+		do {
+			try initializer({ self.value = $0 }, { self.error = $0 })
+		} catch {
+			self.error = error
+		}
 	}
 	
 	private init(value: Value? = nil, error: Swift.Error? = nil) {
